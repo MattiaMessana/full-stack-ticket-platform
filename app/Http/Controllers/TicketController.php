@@ -22,7 +22,9 @@ class TicketController extends Controller
      */
     public function create()
     {
-        //
+        $categories = Category::all();
+        $operators = Operator::all();
+        return view('admin.tickets.create', compact('categories', 'operators'));
     }
 
     /**
@@ -30,23 +32,47 @@ class TicketController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'category_id' => 'required|exists:categories,id',
+            'operator_id' => 'required|exists:operators,id',
+            'status' => 'required|in:open,in_progress,closed',
+        ]);
+
+        Ticket::create($request->all());
+
+        return redirect()->route('tickets.index')->with('success', 'Ticket creato con successo.');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Ticket $ticket)
     {
-        //
+        return view('admin.tickets.show', compact('ticket'));
     }
 
     
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Ticket $ticket)
     {
-        //
+        $ticket->delete();
+        return redirect()->route('tickets.index')->with('success', 'Ticket eliminato con successo.');
+    }
+
+
+    //cambuo stato del ticket 
+    public function updateStatus(Request $request, Ticket $ticket)
+    {
+        $request->validate([
+            'status' => 'required|in:open,in_progress,closed',
+        ]);
+
+        $ticket->update(['status' => $request->status]);
+
+        return redirect()->route('tickets.index')->with('success', 'Stato del ticket aggiornato con successo.');
     }
 }

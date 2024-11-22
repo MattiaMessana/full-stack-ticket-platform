@@ -40,10 +40,12 @@
                                 <option value="closed" {{ $ticket->status === 'closed' ? 'selected' : '' }}>Chiuso</option>
                             </select>
                         </form>
-                        <form action="{{ route('tickets.destroy', $ticket) }}" method="POST" >
+                        <form method="POST" action="{{ route('tickets.destroy', $ticket->id) }}" class="d-inline delete-form">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Sei sicuro?')">Elimina</button>
+                            <button type="button" class="btn btn-danger btn-sm delete-button">
+                                Elimina
+                            </button>
                         </form>
                     </td>
                 </tr>
